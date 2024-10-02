@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "FrameBuffer.h"
 
 int Renderer::Initialize()
 {
@@ -21,4 +22,16 @@ int Renderer::CreateWindow(std::string name, int width, int height)
         SDL_Quit();
         return 1;
     }
+
+    m_renderer = SDL_CreateRenderer(m_window, -1, 0);
+}
+
+void Renderer::CopyFramebuffer(Framebuffer framebuffer)
+{
+    SDL_RenderCopy(m_renderer, framebuffer.GetTexture(), NULL, NULL);
+}
+
+void Renderer::operator=(const Framebuffer& framebuffer)
+{
+    SDL_RenderCopy(m_renderer, framebuffer.GetTexture(), NULL, NULL);
 }
