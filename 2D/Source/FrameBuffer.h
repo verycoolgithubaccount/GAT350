@@ -18,6 +18,7 @@ public:
 	void DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& color);
 	void DrawLine(int x1, int y1, int x2, int y2, const color_t& color);
 	void DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color);
+	void DrawCircle(int xc, int yc, int r, const color_t& color);
 
 	SDL_Texture* GetTexture() const { return m_texture; }
 
@@ -30,4 +31,6 @@ private:
 
 	SDL_Texture* m_texture{ nullptr };
 	std::vector<color_t> m_buffer;
+
+	void CircleStep(int xc, int yc, int x, int y, const color_t& color);
 };

@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     renderer.Initialize();
     renderer.CreateWindow("2D", 800, 600);
 
-    Framebuffer framebuffer(renderer, 200, 150);
+    Framebuffer framebuffer(renderer, 800, 600);
 
     bool quit = false;
     while (!quit)
@@ -34,14 +34,34 @@ int main(int argc, char* argv[])
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 1; i++)
         {
             int x = rand() % framebuffer.GetWidth();
             int y = rand() % framebuffer.GetHeight();
-            framebuffer.DrawPoint(x, y, { 255, 255, 255, 255});
+            int x2 = rand() % framebuffer.GetWidth();
+            int y2 = rand() % framebuffer.GetHeight();
+            int x3 = rand() % framebuffer.GetWidth();
+            int y3 = rand() % framebuffer.GetHeight();
+
+            framebuffer.DrawTriangle(x, y, x2, y2, x3, y3, { (uint8_t) (rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255});
+        
+            x = rand() % framebuffer.GetWidth();
+            y = rand() % framebuffer.GetHeight();
+            x2 = rand() % framebuffer.GetWidth();
+            y2 = rand() % framebuffer.GetHeight();
+
+            framebuffer.DrawLine(x, y, x2, y2, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
+
+
+            x = rand() % framebuffer.GetWidth();
+            y = rand() % framebuffer.GetHeight();
+            int w = rand() % framebuffer.GetWidth() / 30;
+            int h = rand() % framebuffer.GetHeight() / 30;
+            framebuffer.DrawRect(x, y, w, h, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
+
         }
 
-        framebuffer.DrawRect(10, 20, 10, 100, { 255, 255, 255, 255 });
+        framebuffer.DrawCircle(500, 500, 50, { 255, 255, 255, 255 });
 
         framebuffer.Update();
         
