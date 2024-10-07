@@ -1,5 +1,6 @@
 #include "Source/Renderer.h"
 #include "Source/Framebuffer.h"
+#include "Source/MathUtils.h"
 #include <SDL.h>
 #include <iostream>
 #include <memory>
@@ -61,7 +62,20 @@ int main(int argc, char* argv[])
 
         }
 
+        int mx, my;
+        SDL_GetMouseState(&mx, &my);
+
+        framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255, 255, 255, 255 });
+        //framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, { 255, 255, 255, 255 });
+        framebuffer.DrawCubicCurve(300, 500, 300, 200, mx, my, 600, 400, { 255, 255, 255, 255 });
         framebuffer.DrawCircle(500, 500, 50, { 255, 255, 255, 255 });
+
+        int ticks = SDL_GetTicks();
+        float time = ticks * 0.001;
+        float t = std::abs(std::sin(time));
+        int x, y;
+        Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
+        framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
 
         framebuffer.Update();
         

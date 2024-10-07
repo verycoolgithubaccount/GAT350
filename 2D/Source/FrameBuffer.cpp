@@ -1,5 +1,6 @@
 #include "FrameBuffer.h"
 #include "Renderer.h"
+#include "MathUtils.h"
 
 Framebuffer::Framebuffer(const Renderer& renderer, int width, int height)
 {
@@ -140,7 +141,7 @@ void Framebuffer::DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, c
 	DrawLine(x3, y3, x1, y1, color);
 }
 
-void Framebuffer::CircleStep(int xc, int yc, int x, int y, const color_t& color) {
+void Framebuffer::DrawOctants(int xc, int yc, int x, int y, const color_t& color) {
 	DrawPoint(xc + x, yc + y, color);
 	DrawPoint(xc - x, yc + y, color);
 	DrawPoint(xc + x, yc - y, color);
@@ -156,7 +157,7 @@ void Framebuffer::CircleStep(int xc, int yc, int x, int y, const color_t& color)
 void Framebuffer::DrawCircle(int xc, int yc, int r, const color_t& color) {
 	int x = 0, y = r;
 	int d = 3 - 2 * r;
-	CircleStep(xc, yc, x, y, color);
+	DrawOctants(xc, yc, x, y, color);
 	while (y >= x) {
 
 		// check for decision parameter
@@ -173,6 +174,60 @@ void Framebuffer::DrawCircle(int xc, int yc, int r, const color_t& color) {
 		x++;
 
 		// Draw the circle using the new coordinates
-		CircleStep(xc, yc, x, y, color);
+		DrawOctants(xc, yc, x, y, color);
+	}
+}
+
+void Framebuffer::DrawLinearCurve(int x1, int y1, int x2, int y2, const color_t& color)
+{
+	int steps = 10;
+	float dt = (float) 1 / steps;
+	float t1 = 0;
+	for (int i = 0; i < steps; i++)
+	{
+		int sx1 = Math::Lerp(x1, x2, t1);
+		int sy1 = Math::Lerp(y1, y2, t1);
+
+		float t2 = t1 + dt;
+
+		int sx2 = Math::Lerp(x1, x2, t2);
+		int sy2 = Math::Lerp(y1, y2, t2);
+
+		t1 += dt;
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+void Framebuffer::DrawQuadraticCurve(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color)
+{
+	int steps = 50;
+	float dt = (float) 1 / steps;
+	float t1 = 0;
+	for (int i = 0; i < steps; i++)
+	{
+		int sx1, sy1, sx2, sy2;
+		Math::QuadraticPoint(x1, y1, x2, y2, x3, y3, t1, sx1, sy1);
+		float t2 = t1 + dt;
+		Math::QuadraticPoint(x1, y1, x2, y2, x3, y3, t2, sx2, sy2);
+
+		t1 += dt;
+		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+void Framebuffer::DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, const color_t& color)
+{
+	int steps = 100;
+	float dt = (float)1 / steps;
+	float t1 = 0;
+	for (int i = 0; i < steps; i++)
+	{
+		int sx1, sy1, sx2, sy2;
+		Math::CubicPoint(x1, y1, x2, y2, x3, y3, x4, y4, t1, sx1, sy1);
+		float t2 = t1 + dt;
+		Math::CubicPoint(x1, y1, x2, y2, x3, y3, x4, y4, t2, sx2, sy2);
+
+		t1 += dt;
+		DrawLine(sx1, sy1, sx2, sy2, color);
 	}
 }

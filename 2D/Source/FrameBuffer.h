@@ -20,6 +20,10 @@ public:
 	void DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color);
 	void DrawCircle(int xc, int yc, int r, const color_t& color);
 
+	void DrawLinearCurve(int x1, int y1, int x2, int y2, const color_t& color);
+	void DrawQuadraticCurve(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color);
+	void DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, const color_t& color);
+
 	SDL_Texture* GetTexture() const { return m_texture; }
 
 	int GetWidth() const { return m_width; }
@@ -32,5 +36,5 @@ private:
 	SDL_Texture* m_texture{ nullptr };
 	std::vector<color_t> m_buffer;
 
-	void CircleStep(int xc, int yc, int x, int y, const color_t& color);
+	void DrawOctants(int xc, int yc, int x, int y, const color_t& color);
 };
