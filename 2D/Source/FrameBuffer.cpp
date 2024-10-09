@@ -1,6 +1,7 @@
 #include "FrameBuffer.h"
 #include "Renderer.h"
 #include "MathUtils.h"
+#include "Image.h"
 
 Framebuffer::Framebuffer(const Renderer& renderer, int width, int height)
 {
@@ -229,5 +230,41 @@ void Framebuffer::DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3,
 
 		t1 += dt;
 		DrawLine(sx1, sy1, sx2, sy2, color);
+	}
+}
+
+void Framebuffer::DrawImage(int x, int y, float scale, const class Image& image)
+{
+	DrawImage(x, y, scale, scale, image);
+}
+
+void Framebuffer::DrawImage(int x, int y, float scale_x, float scale_y, const class Image& image)
+{
+	// check if off-screen
+	if (x + (image.GetWidth() * scale_x) < 0 || y + (image.GetHeight() * scale_y) < 0 || x > m_width || y > m_height) return;
+
+	// iterate through image y
+	for (int iy = 0; iy < image.GetHeight(); iy++)
+	{
+		// set screen y 
+		int sy = y + (iy * scale_y);
+		// check if off-screen, don't draw if off-screen
+		if (sy < 0 || sy >= m_height) continue;
+
+		// iterate through image x
+		for (int ix = 0; ix < image.GetWidth(); ix++)
+		{
+			// set screen x
+			int sx = x + (ix * scale_x);
+			// check if off-screen, don't draw if off-screen
+			if (sx < 0 || sx >= m_width) continue;
+
+			// get image pixel color
+			color_t color = image.GetBuffer()[ix + iy * image.GetWidth()];
+			// check alpha, if 0 don't draw
+			if (color.a == 0) continue;
+			// set buffer to color
+			m_buffer[sx + sy * m_width] = color;
+		}
 	}
 }

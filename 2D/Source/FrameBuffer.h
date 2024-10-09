@@ -24,6 +24,9 @@ public:
 	void DrawQuadraticCurve(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color);
 	void DrawCubicCurve(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, const color_t& color);
 
+	void DrawImage(int x, int y, float scale, const class Image& image);
+	void DrawImage(int x, int y, float scale_x, float scale_y, const class Image& image);
+
 	SDL_Texture* GetTexture() const { return m_texture; }
 
 	int GetWidth() const { return m_width; }

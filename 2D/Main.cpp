@@ -1,6 +1,7 @@
 #include "Source/Renderer.h"
 #include "Source/Framebuffer.h"
 #include "Source/MathUtils.h"
+#include "Source/Image.h"
 #include <SDL.h>
 #include <iostream>
 #include <memory>
@@ -9,9 +10,12 @@ int main(int argc, char* argv[])
 {
     Renderer renderer;
     renderer.Initialize();
-    renderer.CreateWindow("2D", 800, 600);
+    renderer.CreateWindow("2D", 960, 600);
 
-    Framebuffer framebuffer(renderer, 800, 600);
+    Image image;
+    image.Load("image.png");
+
+    Framebuffer framebuffer(renderer, 960, 600);
 
     bool quit = false;
     while (!quit)
@@ -35,7 +39,7 @@ int main(int argc, char* argv[])
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 5; i++)
         {
             int x = rand() % framebuffer.GetWidth();
             int y = rand() % framebuffer.GetHeight();
@@ -60,6 +64,9 @@ int main(int argc, char* argv[])
             int h = rand() % framebuffer.GetHeight() / 30;
             framebuffer.DrawRect(x, y, w, h, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
 
+            x = rand() % framebuffer.GetWidth();
+            y = rand() % framebuffer.GetHeight();
+            framebuffer.DrawImage(x, y, (2.0f / (rand() % 10)), image);
         }
 
         int mx, my;
