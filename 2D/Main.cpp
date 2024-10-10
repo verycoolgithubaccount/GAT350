@@ -2,9 +2,10 @@
 #include "Source/Framebuffer.h"
 #include "Source/MathUtils.h"
 #include "Source/Image.h"
+#include "Source/PostProcess.h"
+
 #include <SDL.h>
 #include <iostream>
-#include <memory>
 
 int main(int argc, char* argv[])
 {
@@ -13,7 +14,7 @@ int main(int argc, char* argv[])
     renderer.CreateWindow("2D", 960, 600);
 
     Image image;
-    image.Load("image.png");
+    image.Load("scenic.jpg");
 
     Framebuffer framebuffer(renderer, 960, 600);
 
@@ -64,9 +65,11 @@ int main(int argc, char* argv[])
             int h = rand() % framebuffer.GetHeight() / 30;
             framebuffer.DrawRect(x, y, w, h, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
 
+            /*
             x = rand() % framebuffer.GetWidth();
             y = rand() % framebuffer.GetHeight();
             framebuffer.DrawImage(x, y, (2.0f / (rand() % 10)), image);
+            */
         }
 
         int mx, my;
@@ -84,6 +87,9 @@ int main(int argc, char* argv[])
         Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
         framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
 
+        framebuffer.DrawImage(200, 200, 1.0f, image);
+        PostProcess::Monochrome(framebuffer.GetBuffer());
+        PostProcess::Edge(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight(), 10);
         framebuffer.Update();
         
         renderer = framebuffer;

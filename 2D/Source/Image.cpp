@@ -15,7 +15,7 @@ bool Image::Load(const std::string& filename)
 	}
 
 	// resize the image buffer to the number of pixels in the image
-	m_buffer.resize(m_height * m_width);
+	m_buffer.resize(m_width * m_height);
 
 	// copy the image data into the buffer, !!takes in number of bytes to copy!! 
 	std::memcpy(m_buffer.data(), data, (m_width * m_height * sizeof(color_t))); // https://en.cppreference.com/w/cpp/string/byte/memcpy

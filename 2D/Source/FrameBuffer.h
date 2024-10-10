@@ -31,6 +31,7 @@ public:
 
 	int GetWidth() const { return m_width; }
 	int GetHeight() const { return m_height; }
+	std::vector<color_t>& GetBuffer() { return m_buffer; }
 private:
 	int m_width{ 0 };
 	int m_height{ 0 };
