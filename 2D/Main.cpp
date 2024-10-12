@@ -40,6 +40,7 @@ int main(int argc, char* argv[])
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
+        /*
         for (int i = 0; i < 5; i++)
         {
             int x = rand() % framebuffer.GetWidth();
@@ -65,11 +66,10 @@ int main(int argc, char* argv[])
             int h = rand() % framebuffer.GetHeight() / 30;
             framebuffer.DrawRect(x, y, w, h, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
 
-            /*
-            x = rand() % framebuffer.GetWidth();
-            y = rand() % framebuffer.GetHeight();
-            framebuffer.DrawImage(x, y, (2.0f / (rand() % 10)), image);
-            */
+            
+            //x = rand() % framebuffer.GetWidth();
+            //y = rand() % framebuffer.GetHeight();
+            //framebuffer.DrawImage(x, y, (2.0f / (rand() % 10)), image);
         }
 
         int mx, my;
@@ -86,10 +86,13 @@ int main(int argc, char* argv[])
         int x, y;
         Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
         framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
+        */
 
-        framebuffer.DrawImage(200, 200, 1.0f, image);
-        PostProcess::Monochrome(framebuffer.GetBuffer());
-        PostProcess::Edge(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight(), 10);
+        framebuffer.DrawImage(200, 200, 1.5f, image);
+        PostProcess::BoxBlur(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight());
+        PostProcess::Posterize(framebuffer.GetBuffer(), 6);
+        //PostProcess::Posterize(framebuffer.GetBuffer(), 3);
+        //PostProcess::Edge(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight(), 10);
         framebuffer.Update();
         
         renderer = framebuffer;

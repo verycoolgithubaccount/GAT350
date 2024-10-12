@@ -1,6 +1,7 @@
 #include "PostProcess.h"
 #include "MathUtils.h"
 #include <algorithm>
+#include <iostream>
 
 namespace PostProcess
 {
@@ -42,6 +43,57 @@ namespace PostProcess
 				color.r = static_cast<uint8_t>(Math::Clamp(color.r + brightness, 0, 255));
 				color.g = static_cast<uint8_t>(Math::Clamp(color.g + brightness, 0, 255));
 				color.b = static_cast<uint8_t>(Math::Clamp(color.b + brightness, 0, 255));
+			});
+	}
+
+	void ColorBalance(std::vector<color_t>& buffer, int ro, int go, int bo)
+	{
+		std::for_each(buffer.begin(), buffer.end(), [ro, go, bo](color_t& color)
+			{
+				color.r = static_cast<uint8_t>(Math::Clamp(color.r + ro, 0, 255));
+				color.g = static_cast<uint8_t>(Math::Clamp(color.g + go, 0, 255));
+				color.b = static_cast<uint8_t>(Math::Clamp(color.b + bo, 0, 255));
+			});
+	}
+
+	void Threshold(std::vector<color_t>& buffer, uint8_t threshold)
+	{
+		std::for_each(buffer.begin(), buffer.end(), [threshold](color_t& color)
+			{
+				if ((color.r + color.g + color.b) / 3 > threshold)
+				{
+					color.r = 255;
+					color.g = 255;
+					color.b = 255;
+				}
+				else
+				{
+					color.r = 0;
+					color.g = 0;
+					color.b = 0;
+				}
+			});
+	}
+
+	void Noise(std::vector<color_t>& buffer, uint8_t noise)
+	{
+		std::for_each(buffer.begin(), buffer.end(), [noise](color_t& color)
+			{
+				int offset = (rand() % ((noise * 2) + 1)) - noise;
+				color.r = static_cast<uint8_t>(Math::Clamp(color.r + offset, 0, 255));
+				color.g = static_cast<uint8_t>(Math::Clamp(color.g + offset, 0, 255));
+				color.b = static_cast<uint8_t>(Math::Clamp(color.b + offset, 0, 255));
+			});
+	}
+
+	void Posterize(std::vector<color_t>& buffer, uint8_t levels)
+	{
+		uint8_t level = 255 / levels;
+		std::for_each(buffer.begin(), buffer.end(), [level](color_t& color)
+			{
+				color.r = (color.r / level) * level;
+				color.g = (color.g / level) * level;
+				color.b = (color.b / level) * level;
 			});
 	}
 
