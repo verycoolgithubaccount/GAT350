@@ -13,8 +13,11 @@ namespace PostProcess
 
 	void Edge(std::vector<color_t>& buffer, int width, int height, int threshold);
 
+	void Alpha(std::vector<color_t>& buffer, uint8_t alpha);
+
 	void BoxBlur(std::vector<color_t>& buffer, int w, int h);
 	void GaussianBlur(std::vector<color_t>& buffer, int w, int h);
 	void Sharpen(std::vector<color_t>& buffer, int w, int h);
+	void Emboss(std::vector<color_t>& buffer, int w, int h);
 	void ApplyKernel(std::vector<color_t>& buffer, int w, int h, int kernel[3][3]);
 }

@@ -149,6 +149,14 @@ namespace PostProcess
 		}
 	}
 
+	void Alpha(std::vector<color_t>& buffer, uint8_t alpha)
+	{
+		std::for_each(buffer.begin(), buffer.end(), [alpha](color_t& c)
+			{
+				c.a = alpha;
+			});
+	}
+
 	void BoxBlur(std::vector<color_t>& buffer, int w, int h)
 	{
 		int kernel[3][3] =
@@ -180,6 +188,18 @@ namespace PostProcess
 			{0, -1, 0},
 			{-1, 5, -1},
 			{0, -1, 0}
+		};
+
+		ApplyKernel(buffer, w, h, kernel);
+	}
+
+	void Emboss(std::vector<color_t>& buffer, int w, int h)
+	{
+		int kernel[3][3] =
+		{
+			{-2, -1, 0},
+			{-1, 1, 1},
+			{0, 1, 2}
 		};
 
 		ApplyKernel(buffer, w, h, kernel);

@@ -3,6 +3,7 @@
 #include "Source/MathUtils.h"
 #include "Source/Image.h"
 #include "Source/PostProcess.h"
+#include "Source/Color.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -15,6 +16,9 @@ int main(int argc, char* argv[])
 
     Image image;
     image.Load("scenic.jpg");
+
+    Image imageAlpha;
+    imageAlpha.Load("imageAlpha.png");
 
     Framebuffer framebuffer(renderer, 960, 600);
 
@@ -71,28 +75,34 @@ int main(int argc, char* argv[])
             //y = rand() % framebuffer.GetHeight();
             //framebuffer.DrawImage(x, y, (2.0f / (rand() % 10)), image);
         }
+        */
 
         int mx, my;
         SDL_GetMouseState(&mx, &my);
 
-        framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255, 255, 255, 255 });
+        //framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255, 255, 255, 255 });
         //framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, { 255, 255, 255, 255 });
-        framebuffer.DrawCubicCurve(300, 500, 300, 200, mx, my, 600, 400, { 255, 255, 255, 255 });
-        framebuffer.DrawCircle(500, 500, 50, { 255, 255, 255, 255 });
+        //framebuffer.DrawCubicCurve(300, 500, 300, 200, mx, my, 600, 400, { 255, 255, 255, 255 });
+        //framebuffer.DrawCircle(500, 500, 50, { 255, 255, 255, 255 });
+        
 
         int ticks = SDL_GetTicks();
         float time = ticks * 0.001;
         float t = std::abs(std::sin(time));
-        int x, y;
-        Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
-        framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
-        */
+        //int x, y;
+        //Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
+        //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
 
+        Color::SetBlendMode(BlendMode::NORMAL);
         framebuffer.DrawImage(200, 200, 1.5f, image);
         PostProcess::BoxBlur(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight());
-        PostProcess::Posterize(framebuffer.GetBuffer(), 6);
-        //PostProcess::Posterize(framebuffer.GetBuffer(), 3);
-        //PostProcess::Edge(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight(), 10);
+        //PostProcess::Posterize(framebuffer.GetBuffer(), 6);
+
+        Color::SetBlendMode(BlendMode::ALPHA);
+        //framebuffer.DrawImage(mx, my, 1.0f, imageAlpha);
+
+        //PostProcess::Monochrome(framebuffer.GetBuffer());
+        PostProcess::Emboss(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight());
         framebuffer.Update();
         
         renderer = framebuffer;
