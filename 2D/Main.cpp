@@ -4,9 +4,12 @@
 #include "Source/Image.h"
 #include "Source/PostProcess.h"
 #include "Source/Color.h"
+#include "Source/Model.h"
 
 #include <SDL.h>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -19,6 +22,13 @@ int main(int argc, char* argv[])
 
     Image imageAlpha;
     imageAlpha.Load("imageAlpha.png");
+    PostProcess::Alpha(imageAlpha.m_buffer, 64);
+
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(1.0f, 0.0f, 0.0f));
+
+    vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, { -5, -5, 0 } };
+    Model model;
 
     Framebuffer framebuffer(renderer, 960, 600);
 
@@ -93,16 +103,16 @@ int main(int argc, char* argv[])
         //Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
         //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
 
-        Color::SetBlendMode(BlendMode::NORMAL);
+        Color::SetBlendMode(Color::BlendMode::NORMAL);
         framebuffer.DrawImage(200, 200, 1.5f, image);
         PostProcess::BoxBlur(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight());
         //PostProcess::Posterize(framebuffer.GetBuffer(), 6);
 
-        Color::SetBlendMode(BlendMode::ALPHA);
+        Color::SetBlendMode(Color::BlendMode::NORMAL);
+        framebuffer.DrawCircle(mx, my, 20, { 100, 100, 0 });
         //framebuffer.DrawImage(mx, my, 1.0f, imageAlpha);
 
         //PostProcess::Monochrome(framebuffer.GetBuffer());
-        PostProcess::Emboss(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight());
         framebuffer.Update();
         
         renderer = framebuffer;

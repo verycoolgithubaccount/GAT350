@@ -8,8 +8,8 @@ class Image
 private:
 	int m_width{ 0 };
 	int m_height{ 0 };
-	std::vector<color_t> m_buffer;
 public:
+	std::vector<color_t> m_buffer;
 	Image() = default;
 	~Image() = default;
 

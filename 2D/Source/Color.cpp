@@ -1,4 +1,6 @@
 #include "Color.h"
+#include <iostream>
+#include <cassert>
 
 namespace Color
 {
@@ -18,7 +20,7 @@ namespace Color
 			blend_func = AdditiveBlend;
 			break;
 		case BlendMode::MULTIPLY:
-			//blend_func = MultiplyBlend;
+			blend_func = MultiplyBlend;
 			break;
 		default:
 			break;
@@ -28,6 +30,7 @@ namespace Color
 
 	color_t ColorBlend(const color_t& src, const color_t& dest)
 	{
+		assert(blend_func);
 		return blend_func(src, dest);
 	}
 
@@ -36,7 +39,6 @@ namespace Color
 		return src;
 	}
 
-	// Alpha blending - get rid of the harsh pixel border
 	color_t AlphaBlend(const color_t& src, const color_t& dest)
 	{
 		uint8_t alpha = src.a;
@@ -57,6 +59,17 @@ namespace Color
 		color.r = std::min(src.r + dest.r, 255); // std::min returns whichever is smaller
 		color.g = std::min(src.g + dest.g, 255);
 		color.b = std::min(src.b + dest.b, 255);
+		color.a = src.a;
+
+		return color;
+	}
+
+	color_t MultiplyBlend(const color_t& src, const color_t& dest)
+	{
+		color_t color;
+		color.r = (src.r * dest.r) >> 8;
+		color.g = (src.g * dest.g) >> 8;
+		color.b = (src.b * dest.b) >> 8;
 		color.a = src.a;
 
 		return color;

@@ -35,6 +35,12 @@ void Framebuffer::Clear(const color_t& color)
 
 void Framebuffer::DrawPoint(int x, int y, const color_t& color)
 {
+	color_t& dest = m_buffer[x + y * m_width];
+	dest = Color::ColorBlend(color, dest);
+}
+
+void Framebuffer::DrawPointClipped(int x, int y, const color_t& color)
+{
 	if (x > m_width || x < 0 || y < 0 || y >= m_height) return;
 
 	color_t& dest = m_buffer[x + y * m_width];
@@ -69,7 +75,8 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 	{
 		for (int y = y1; y < y2; y++)
 		{
-			m_buffer[x1 + y * m_width] = color;
+			color_t& dest = m_buffer[x1 + y * m_width];
+			dest = Color::ColorBlend(color, dest);
 		}
 		return;
 	}
@@ -82,7 +89,9 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 		for (int x = x1; x < x2; x++)
 		{
 			int y = (int)round((m * x) + b);
-			m_buffer[x + y * m_width] = color;
+
+			color_t& dest = m_buffer[x + y * m_width];
+			dest = Color::ColorBlend(color, dest);
 		}
 	}
 	else
@@ -90,7 +99,8 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 		for (int y = y1; y < y2; y++)
 		{
 			int x = (int)round((y - b) / m);
-			m_buffer[x + y * m_width] = color;
+			color_t& dest = m_buffer[x + y * m_width];
+			dest = Color::ColorBlend(color, dest);
 		}
 	}
 }
@@ -266,7 +276,7 @@ void Framebuffer::DrawImage(int x, int y, float scale_x, float scale_y, const cl
 			// check alpha, if 0 don't draw
 			if (color.a == 0) continue;
 			// set buffer to color
-			m_buffer[sx + sy * m_width] = color;
+			DrawPoint(sx, sy, color);
 		}
 	}
 }
