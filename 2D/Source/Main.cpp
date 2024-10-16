@@ -1,10 +1,14 @@
-#include "Source/Renderer.h"
-#include "Source/Framebuffer.h"
-#include "Source/MathUtils.h"
-#include "Source/Image.h"
-#include "Source/PostProcess.h"
-#include "Source/Color.h"
-#include "Source/Model.h"
+#include "Renderer.h"
+#include "Framebuffer.h"
+#include "MathUtils.h"
+#include "Image.h"
+#include "PostProcess.h"
+#include "Color.h"
+#include "Model.h"
+#include "Random.h"
+#include "Input.h"
+#include "ETime.h"
+#include "Transform.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -13,9 +17,14 @@
 
 int main(int argc, char* argv[])
 {
+    Time time;
+    Input input;
+    input.Initialize();
+
     Renderer renderer;
     renderer.Initialize();
     renderer.CreateWindow("2D", 960, 600);
+
 
     Image image;
     image.Load("scenic.jpg");
@@ -26,12 +35,16 @@ int main(int argc, char* argv[])
 
     vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, { -5, -5, 0 } };
     Model model(vertices, { 0, 255, 0, 255 });
+    Transform transform({ 240, 240, 0 }, glm::vec3{ 0, 0, 45 }, glm::vec3{ 10 });
 
     Framebuffer framebuffer(renderer, 960, 600);
 
     bool quit = false;
     while (!quit)
     {
+        time.Tick();
+        input.Update();
+
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -89,9 +102,6 @@ int main(int argc, char* argv[])
         int mx, my;
         SDL_GetMouseState(&mx, &my);
 
-        int ticks = SDL_GetTicks();
-        float time = ticks * 0.001;
-        float t = std::abs(std::sin(time));
         //int x, y;
         //Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
         //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
@@ -111,14 +121,22 @@ int main(int argc, char* argv[])
         //PostProcess::Monochrome(framebuffer.GetBuffer());
 #pragma endregion
 
-        glm::mat4 modelMatrix = glm::mat4(1.0f);
-        glm::mat4 translate = glm::translate(modelMatrix, glm::vec3(240.0f, 240.0f, 0.0f));
-        glm::mat4 scale = glm::scale(modelMatrix, glm::vec3(10.0f));
-        glm::mat4 rotate = glm::rotate(modelMatrix, glm::radians(time * 90), glm::vec3( 1, 1, 1)); // x, y, z, 0 or 1 for each
+        glm::vec3 direction{ 0 };
+        if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_S)) direction.y = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_W)) direction.y = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.z = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_E)) direction.z = -1;
 
-        modelMatrix = translate * scale * rotate;
+        transform.position += direction * 100.0f * time.GetDeltaTime();
+        
+        transform.rotation.x += 45 * time.GetDeltaTime();
+        transform.rotation.y += 90 * time.GetDeltaTime();
+        transform.rotation.z += 180 * time.GetDeltaTime();
+        
 
-        model.Draw(framebuffer, modelMatrix);
+        model.Draw(framebuffer, transform.GetMatrix());
 
         framebuffer.Update();
         
