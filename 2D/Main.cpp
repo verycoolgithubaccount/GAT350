@@ -24,11 +24,8 @@ int main(int argc, char* argv[])
     imageAlpha.Load("imageAlpha.png");
     PostProcess::Alpha(imageAlpha.m_buffer, 64);
 
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(1.0f, 0.0f, 0.0f));
-
     vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, { -5, -5, 0 } };
-    Model model;
+    Model model(vertices, { 0, 255, 0, 255 });
 
     Framebuffer framebuffer(renderer, 960, 600);
 
@@ -54,6 +51,7 @@ int main(int argc, char* argv[])
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
+#pragma region primitive drawing loop
         /*
         for (int i = 0; i < 5; i++)
         {
@@ -86,15 +84,10 @@ int main(int argc, char* argv[])
             //framebuffer.DrawImage(x, y, (2.0f / (rand() % 10)), image);
         }
         */
+#pragma endregion
 
         int mx, my;
         SDL_GetMouseState(&mx, &my);
-
-        //framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255, 255, 255, 255 });
-        //framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, { 255, 255, 255, 255 });
-        //framebuffer.DrawCubicCurve(300, 500, 300, 200, mx, my, 600, 400, { 255, 255, 255, 255 });
-        //framebuffer.DrawCircle(500, 500, 50, { 255, 255, 255, 255 });
-        
 
         int ticks = SDL_GetTicks();
         float time = ticks * 0.001;
@@ -103,16 +96,30 @@ int main(int argc, char* argv[])
         //Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
         //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
 
-        Color::SetBlendMode(Color::BlendMode::NORMAL);
-        framebuffer.DrawImage(200, 200, 1.5f, image);
-        PostProcess::BoxBlur(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight());
+#pragma region alpha stuff
+        //Color::SetBlendMode(Color::BlendMode::NORMAL);
+        //framebuffer.DrawImage(200, 200, 1.5f, image);
+        //PostProcess::BoxBlur(framebuffer.GetBuffer(), framebuffer.GetWidth(), framebuffer.GetHeight());
         //PostProcess::Posterize(framebuffer.GetBuffer(), 6);
 
-        Color::SetBlendMode(Color::BlendMode::NORMAL);
-        framebuffer.DrawCircle(mx, my, 20, { 100, 100, 0 });
+        //Color::SetBlendMode(Color::BlendMode::ALPHA);
         //framebuffer.DrawImage(mx, my, 1.0f, imageAlpha);
+#pragma endregion
 
+#pragma region postprocess
+        //
         //PostProcess::Monochrome(framebuffer.GetBuffer());
+#pragma endregion
+
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        glm::mat4 translate = glm::translate(modelMatrix, glm::vec3(240.0f, 240.0f, 0.0f));
+        glm::mat4 scale = glm::scale(modelMatrix, glm::vec3(10.0f));
+        glm::mat4 rotate = glm::rotate(modelMatrix, glm::radians(time * 90), glm::vec3( 1, 1, 1)); // x, y, z, 0 or 1 for each
+
+        modelMatrix = translate * scale * rotate;
+
+        model.Draw(framebuffer, modelMatrix);
+
         framebuffer.Update();
         
         renderer = framebuffer;

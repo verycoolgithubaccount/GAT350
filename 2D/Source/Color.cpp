@@ -30,7 +30,7 @@ namespace Color
 
 	color_t ColorBlend(const color_t& src, const color_t& dest)
 	{
-		assert(blend_func);
+		if (!blend_func) SetBlendMode(BlendMode::NORMAL);
 		return blend_func(src, dest);
 	}
 

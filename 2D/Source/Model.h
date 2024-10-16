@@ -12,7 +12,7 @@ public:
 	Model() = default;
 	Model(const vertices_t& vertices, const color_t& color) : m_vertices{ vertices }, m_color{ color } {}
 
-	void Draw(class Framebuffer& framebuffer);
+	void Draw(class Framebuffer& framebuffer, const glm::mat4& model);
 
 private:
 	vertices_t m_vertices;
