@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     image.Load("scenic.jpg");
 
     Model teapot;
-    teapot.Load("skeleton.obj");
+    teapot.Load("teapot.obj");
     teapot.SetColor({ 0, 255, 0, 255 });
 
     Image imageAlpha;
@@ -144,9 +144,9 @@ int main(int argc, char* argv[])
         cameraTransform.position += direction * 100.0f * time.GetDeltaTime();
         camera.SetView(cameraTransform.position, cameraTransform.position + glm::vec3{ 0, 0, 1 });
 
-        transform.rotation.x += 45 * time.GetDeltaTime();
-        transform.rotation.y += 90 * time.GetDeltaTime();
-        transform.rotation.z += 180 * time.GetDeltaTime();
+        //transform.rotation.x += 45 * time.GetDeltaTime();
+        //transform.rotation.y += 90 * time.GetDeltaTime();
+        //transform.rotation.z += 180 * time.GetDeltaTime();
         
         //model.Draw(framebuffer, transform.GetMatrix(), camera);
 

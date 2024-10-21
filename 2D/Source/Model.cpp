@@ -45,7 +45,7 @@ bool Model::Load(const std::string& filename)
 	{
 		// read in vertex positions
 		// https://cplusplus.com/reference/string/string/substr/
-		if (line.find("v") != std::string::npos)
+		if (line.substr(0, 2) == "v ")
 		{
 			// read position of vertex
 			std::istringstream sstream{ line.substr(2) };
@@ -57,7 +57,7 @@ bool Model::Load(const std::string& filename)
 			vertices.push_back(position);
 		}
 		// read in faces (triangles)
-		else if (line.find("f") != std::string::npos)
+		else if (line.substr(0, 2) == "f ")
 		{
 			// read face (triangle), index of vertex position in vertices array [1, 2, 3]
 			std::istringstream sstream{ line.substr(2) };
