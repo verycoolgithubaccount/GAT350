@@ -41,7 +41,7 @@ void Framebuffer::DrawPoint(int x, int y, const color_t& color)
 
 void Framebuffer::DrawPointClipped(int x, int y, const color_t& color)
 {
-	if (x > m_width || x < 0 || y < 0 || y >= m_height) return;
+	if (x >= m_width || x <= 0 || y <= 0 || y >= m_height) return;
 
 	color_t& dest = m_buffer[x + y * m_width];
 	dest = Color::ColorBlend(color, dest);

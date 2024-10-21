@@ -9,6 +9,7 @@
 #include "Input.h"
 #include "ETime.h"
 #include "Transform.h"
+#include "Camera.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -25,19 +26,30 @@ int main(int argc, char* argv[])
     renderer.Initialize();
     renderer.CreateWindow("2D", 960, 600);
 
+    Framebuffer framebuffer(renderer, renderer.GetWidth(), renderer.GetHeight());
 
+    Camera camera(renderer.GetWidth(), renderer.GetHeight());
+    camera.SetView(glm::vec3{ 0, 0, -20 }, glm::vec3{ 0 });
+    camera.SetProjection(60.0f, renderer.GetWidth() / renderer.GetHeight(), 0.1f, 200.0f);
+    Transform cameraTransform{ { 0, 0, -20 } };
+
+    // Load images
     Image image;
     image.Load("scenic.jpg");
+
+    Model teapot;
+    teapot.Load("skeleton.obj");
+    teapot.SetColor({ 0, 255, 0, 255 });
 
     Image imageAlpha;
     imageAlpha.Load("imageAlpha.png");
     PostProcess::Alpha(imageAlpha.m_buffer, 64);
 
+
+    // Create model
     vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, { -5, -5, 0 } };
     Model model(vertices, { 0, 255, 0, 255 });
-    Transform transform({ 240, 240, 0 }, glm::vec3{ 0, 0, 45 }, glm::vec3{ 10 });
-
-    Framebuffer framebuffer(renderer, 960, 600);
+    Transform transform({ 0, 0, 0 }, glm::vec3{ 0, 0, 45 }, glm::vec3{ 2 });
 
     bool quit = false;
     while (!quit)
@@ -129,14 +141,16 @@ int main(int argc, char* argv[])
         if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.z = 1;
         if (input.GetKeyDown(SDL_SCANCODE_E)) direction.z = -1;
 
-        transform.position += direction * 100.0f * time.GetDeltaTime();
-        
+        cameraTransform.position += direction * 100.0f * time.GetDeltaTime();
+        camera.SetView(cameraTransform.position, cameraTransform.position + glm::vec3{ 0, 0, 1 });
+
         transform.rotation.x += 45 * time.GetDeltaTime();
         transform.rotation.y += 90 * time.GetDeltaTime();
         transform.rotation.z += 180 * time.GetDeltaTime();
         
+        //model.Draw(framebuffer, transform.GetMatrix(), camera);
 
-        model.Draw(framebuffer, transform.GetMatrix());
+        teapot.Draw(framebuffer, transform.GetMatrix(), camera);
 
         framebuffer.Update();
         

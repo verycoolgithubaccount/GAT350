@@ -19,4 +19,6 @@ public:
 
 	SDL_Window* GetWindow() const { return m_window; }
 	SDL_Renderer* GetRenderer() const { return m_renderer; }
+	int GetWidth() const { return m_width; }
+	int GetHeight() const { return m_height; }
 };
