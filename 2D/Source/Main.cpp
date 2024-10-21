@@ -10,11 +10,14 @@
 #include "ETime.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "Actor.h"
 
 #include <SDL.h>
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <memory>
+#include <vector>
 
 int main(int argc, char* argv[])
 {
@@ -26,10 +29,12 @@ int main(int argc, char* argv[])
     renderer.Initialize();
     renderer.CreateWindow("2D", 960, 600);
 
+    //SDL_SetWindowMouseGrab(renderer.GetWindow(), SDL_TRUE);
+
     Framebuffer framebuffer(renderer, renderer.GetWidth(), renderer.GetHeight());
 
     Camera camera(renderer.GetWidth(), renderer.GetHeight());
-    camera.SetView(glm::vec3{ 0, 0, -20 }, glm::vec3{ 0 });
+    camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
     camera.SetProjection(60.0f, renderer.GetWidth() / renderer.GetHeight(), 0.1f, 200.0f);
     Transform cameraTransform{ { 0, 0, -20 } };
 
@@ -37,9 +42,19 @@ int main(int argc, char* argv[])
     Image image;
     image.Load("scenic.jpg");
 
-    Model teapot;
-    teapot.Load("teapot.obj");
-    teapot.SetColor({ 0, 255, 0, 255 });
+    std::shared_ptr<Model> teapot = std::make_shared<Model>();
+    teapot->Load("torus.obj");
+    teapot->SetColor({ 0, 255, 0, 255 });
+
+    std::vector<std::unique_ptr<Actor>> actors;
+
+    for (int i = 0; i < 20; i++)
+    {
+        Transform transform({ randomf(-10.0f, 10.0f), randomf(-10.0f, 10.0f), randomf(-10.0f, 10.0f) }, glm::vec3{ 0, 0, 45 }, glm::vec3{ 2 });
+        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, teapot);
+        actor->SetColor({ (uint8_t)random(256), (uint8_t)random(256), (uint8_t)random(256), 255 });
+        actors.push_back(std::move(actor));
+    }
 
     Image imageAlpha;
     imageAlpha.Load("imageAlpha.png");
@@ -49,7 +64,6 @@ int main(int argc, char* argv[])
     // Create model
     vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, { -5, -5, 0 } };
     Model model(vertices, { 0, 255, 0, 255 });
-    Transform transform({ 0, 0, 0 }, glm::vec3{ 0, 0, 45 }, glm::vec3{ 2 });
 
     bool quit = false;
     while (!quit)
@@ -69,6 +83,8 @@ int main(int argc, char* argv[])
                 quit = true;
             }
         }
+
+        if (input.GetKeyDown(SDL_SCANCODE_ESCAPE)) quit = true;
 
         // clear screen
         SDL_SetRenderDrawColor(renderer.GetRenderer(), 0, 0, 0, 0);
@@ -136,13 +152,18 @@ int main(int argc, char* argv[])
         glm::vec3 direction{ 0 };
         if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
         if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
-        if (input.GetKeyDown(SDL_SCANCODE_S)) direction.y = 1;
-        if (input.GetKeyDown(SDL_SCANCODE_W)) direction.y = -1;
-        if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.z = 1;
-        if (input.GetKeyDown(SDL_SCANCODE_E)) direction.z = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
 
-        cameraTransform.position += direction * 100.0f * time.GetDeltaTime();
-        camera.SetView(cameraTransform.position, cameraTransform.position + glm::vec3{ 0, 0, 1 });
+        cameraTransform.rotation.y += input.GetMousePositionDelta().x * 0.1f;
+        cameraTransform.rotation.x -= input.GetMousePositionDelta().y * 0.1f;
+
+        glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction, 0 };
+
+        cameraTransform.position += offset * 100.0f * time.GetDeltaTime();
+        camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
 
         //transform.rotation.x += 45 * time.GetDeltaTime();
         //transform.rotation.y += 90 * time.GetDeltaTime();
@@ -150,7 +171,10 @@ int main(int argc, char* argv[])
         
         //model.Draw(framebuffer, transform.GetMatrix(), camera);
 
-        teapot.Draw(framebuffer, transform.GetMatrix(), camera);
+        for (auto& actor : actors)
+        {
+            actor->Draw(framebuffer, camera);
+        }
 
         framebuffer.Update();
         

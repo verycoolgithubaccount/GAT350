@@ -13,6 +13,17 @@ bool Input::Initialize()
 
 	m_prevKeyboardState = m_keyboardState;
 
+	// set initial mouse position
+
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+	m_previousMousePosition.x = (float) x;
+	m_mousePosition.x = (float) x;
+	m_previousMousePosition.y = (float) y;
+	m_mousePosition.y = (float) y;
+
 	return true;
 }
 
@@ -32,6 +43,7 @@ void Input::Update()
 	int x, y;
 	uint32_t buttonState = SDL_GetMouseState(&x, &y);
 
+	m_previousMousePosition = m_mousePosition;
 	m_mousePosition.x = (float)x;
 	m_mousePosition.y = (float)y;
 
