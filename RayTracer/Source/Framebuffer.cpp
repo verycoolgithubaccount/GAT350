@@ -259,7 +259,7 @@ void Framebuffer::DrawImage(int x, int y, float scale_x, float scale_y, const cl
 	for (int iy = 0; iy < image.GetHeight(); iy++)
 	{
 		// set screen y 
-		int sy = y + (iy * scale_y);
+		int sy = static_cast<int>(y + (iy * scale_y));
 		// check if off-screen, don't draw if off-screen
 		if (sy < 0 || sy >= m_height) continue;
 
@@ -267,7 +267,7 @@ void Framebuffer::DrawImage(int x, int y, float scale_x, float scale_y, const cl
 		for (int ix = 0; ix < image.GetWidth(); ix++)
 		{
 			// set screen x
-			int sx = x + (ix * scale_x);
+			int sx = static_cast<int>(x + (ix * scale_x));
 			// check if off-screen, don't draw if off-screen
 			if (sx < 0 || sx >= m_width) continue;
 

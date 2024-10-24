@@ -1,11 +1,50 @@
 #pragma once
+#include "MathUtils.h"
 #include <SDL.h>
 #include <algorithm>
+#include <glm/glm.hpp>
 
 using color_t = SDL_Color;
+using color3_t = glm::vec3;
+using color4_t = glm::vec4;
 
 namespace Color
 {
+	inline color_t Convert(const color4_t& color4)
+	{
+		color_t color;
+		color.r = static_cast<uint8_t>(Math::Clamp(color4.r, 0.0f, 1.0f) * 255);
+		color.g = static_cast<uint8_t>(Math::Clamp(color4.g, 0.0f, 1.0f) * 255);
+		color.b = static_cast<uint8_t>(Math::Clamp(color4.b, 0.0f, 1.0f) * 255);
+		color.a = static_cast<uint8_t>(Math::Clamp(color4.a, 0.0f, 1.0f) * 255);
+
+		return color;
+	}
+
+	inline color_t Convert(const color3_t& color3)
+	{
+		color_t color;
+		color.r = static_cast<uint8_t>(Math::Clamp(color3.r, 0.0f, 1.0f) * 255);
+		color.g = static_cast<uint8_t>(Math::Clamp(color3.g, 0.0f, 1.0f) * 255);
+		color.b = static_cast<uint8_t>(Math::Clamp(color3.b, 0.0f, 1.0f) * 255);
+		color.a = 255;
+
+		return color;
+	}
+
+	inline color4_t Convert(const color_t& color)
+	{
+		color4_t color4;
+		color4.r = color.r / 255.0f;
+		color4.g = color.g / 255.0f;
+		color4.b = color.b / 255.0f;
+		color4.a = color.a / 255.0f;
+
+		return color4;
+	}
+
+	// color blending
+
 	enum class BlendMode
 	{
 		NORMAL,

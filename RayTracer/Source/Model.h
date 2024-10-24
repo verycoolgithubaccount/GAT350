@@ -9,6 +9,10 @@ using vertices_t = std::vector<vertex_t>;
 
 class Model
 {
+private:
+	vertices_t m_vertices;
+	color_t m_color;
+
 public:
 	Model() = default;
 	Model(const vertices_t& vertices, const color_t& color) : m_vertices{ vertices }, m_color{ color } {}
@@ -18,8 +22,4 @@ public:
 	bool Load(const std::string& filename);
 
 	void SetColor(const color_t& color) { m_color = color; }
-
-private:
-	vertices_t m_vertices;
-	color_t m_color;
 };

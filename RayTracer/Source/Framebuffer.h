@@ -6,6 +6,16 @@ using color_t = SDL_Color;
 
 class Framebuffer
 {
+private:
+	int m_width{ 0 };
+	int m_height{ 0 };
+	int m_pitch{ 0 };
+
+	SDL_Texture* m_texture{ nullptr };
+	std::vector<color_t> m_buffer;
+
+	void DrawOctants(int xc, int yc, int x, int y, const color_t& color);
+
 public:
 	Framebuffer(const class Renderer& renderer, int width, int height);
 	~Framebuffer();
@@ -33,13 +43,4 @@ public:
 	int GetWidth() const { return m_width; }
 	int GetHeight() const { return m_height; }
 	std::vector<color_t>& GetBuffer() { return m_buffer; }
-private:
-	int m_width{ 0 };
-	int m_height{ 0 };
-	int m_pitch{ 0 };
-
-	SDL_Texture* m_texture{ nullptr };
-	std::vector<color_t> m_buffer;
-
-	void DrawOctants(int xc, int yc, int x, int y, const color_t& color);
 };
