@@ -1,5 +1,5 @@
 #pragma once
-#include "SceneObject.h"
+#include "Sphere.h"
 #include <vector> // for a game, list is better bc adding/deleting objects, for a showcase, vector is better bc faster
 #include <memory>
 
@@ -12,4 +12,6 @@ public:
 
 	void Render(class Framebuffer& framebuffer, const class Camera& camera);
 	void AddObject(std::unique_ptr<SceneObject> object) { m_objects.push_back(std::move(object)); }
+
+	const std::vector<std::unique_ptr<SceneObject>>& const GetObjects() { return m_objects; }
 };

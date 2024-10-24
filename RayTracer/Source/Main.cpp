@@ -24,6 +24,7 @@
 
 int main(int argc, char* argv[])
 {
+    // Initialize
     Time time;
     Input input;
     input.Initialize();
@@ -34,10 +35,14 @@ int main(int argc, char* argv[])
 
     Framebuffer framebuffer(renderer, renderer.GetWidth(), renderer.GetHeight());
 
-    Camera camera{ 70.0f, (float) (renderer.GetWidth() / renderer.GetHeight())};
+    Camera camera{ 70.0f, (renderer.GetWidth() / (float) renderer.GetHeight())};
     camera.SetView({ 0, 0, -20 }, { 0, 0, 0 });
 
     Scene scene;
+
+    std::shared_ptr<Material> material = std::make_shared<Material>(color3_t{ 1, 0, 0 });
+    auto object = std::make_unique<Sphere>(glm::vec3{ 0, 0, 40 }, 2.0f, material);
+    scene.AddObject(std::move(object));
 
     bool quit = false;
     while (!quit)

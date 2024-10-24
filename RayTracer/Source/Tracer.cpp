@@ -1,14 +1,19 @@
 #include "Tracer.h"
 #include "Camera.h"
 #include "Framebuffer.h"
-#include "Color.h"
-#include "Ray.h"
-#include "MathUtils.h"
-#include <glm/glm.hpp>
+#include "Scene.h"
 
 color3_t Tracer::Trace(Scene& scene, const ray_t& ray)
 {
 	color3_t color{ 0 };
+
+	for (auto& object : scene.GetObjects())
+	{
+		if (object->Hit(ray))
+		{
+			return { 1, 0, 0 };
+		}
+	}
 
 	// sky
 	glm::vec3 direction = glm::normalize(ray.direction);
