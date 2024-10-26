@@ -22,12 +22,14 @@
 int main(int argc, char* argv[])
 {
     Time time;
-    Input input;
-    input.Initialize();
 
     Renderer renderer;
     renderer.Initialize();
     renderer.CreateWindow("2D", 960, 600);
+
+    Input input;
+    input.Initialize();
+    input.Update();
 
     //SDL_SetWindowMouseGrab(renderer.GetWindow(), SDL_TRUE);
 
@@ -35,26 +37,50 @@ int main(int argc, char* argv[])
 
     Camera camera(renderer.GetWidth(), renderer.GetHeight());
     camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
-    camera.SetProjection(60.0f, renderer.GetWidth() / renderer.GetHeight(), 0.1f, 200.0f);
+    camera.SetProjection(60.0f, renderer.GetWidth() / (float) renderer.GetHeight(), 0.1f, 200.0f);
     Transform cameraTransform{ { 0, 0, -20 } };
 
     // Load images
     Image image;
-    image.Load("scenic.jpg");
-
-    std::shared_ptr<Model> teapot = std::make_shared<Model>();
-    teapot->Load("torus.obj");
-    teapot->SetColor({ 0, 255, 0, 255 });
+    image.Load("hill.jpg");
 
     std::vector<std::unique_ptr<Actor>> actors;
 
+    std::shared_ptr<Model> teapotModel = std::make_shared<Model>();
+    teapotModel->Load("teapot.obj");
+    Transform teapotTransform({ 0.0f, 30.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 2 });
+    std::unique_ptr<Actor> teapot = std::make_unique<Actor>(teapotTransform, teapotModel);
+    teapot->SetColor({ 0, 55, 200 });
+    actors.push_back(std::move(teapot));
+
+    std::shared_ptr<Model> littleManModel = std::make_shared<Model>();
+    littleManModel->Load("littleMan.obj");
+    Transform littleManTransform({ 0.0f, 3.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 4 });
+    std::unique_ptr<Actor> littleMan = std::make_unique<Actor>(littleManTransform, littleManModel);
+    littleMan->SetColor({ 255, 128, 0 });
+    actors.push_back(std::move(littleMan));
+
+    std::shared_ptr<Model> groundModel = std::make_shared<Model>();
+    groundModel->Load("ground.obj");
+    Transform groundTransform({ 0.0f, -5.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 5 });
+    std::unique_ptr<Actor> ground = std::make_unique<Actor>(groundTransform, groundModel);
+    ground->SetColor({ 92, 56, 21 });
+    actors.push_back(std::move(ground));
+
+
+    std::shared_ptr<Model> treeModel = std::make_shared<Model>();
+    treeModel->Load("tree.obj");
+    
+
+    
     for (int i = 0; i < 20; i++)
     {
-        Transform transform({ randomf(-10.0f, 10.0f), randomf(-10.0f, 10.0f), randomf(-10.0f, 10.0f) }, glm::vec3{ 0, 0, 45 }, glm::vec3{ 2 });
-        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, teapot);
-        actor->SetColor({ (uint8_t)random(256), (uint8_t)random(256), (uint8_t)random(256), 255 });
+        Transform transform({ randomf(-50.0f, 50.0f), 0, randomf(-50.0f, 50.0f) }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 0.05 });
+        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, treeModel);
+        actor->SetColor({ (uint8_t)random(0, 100), (uint8_t)random(150, 256), (uint8_t)random(0, 100), 255 });
         actors.push_back(std::move(actor));
     }
+    
 
     Image imageAlpha;
     imageAlpha.Load("imageAlpha.png");
@@ -64,6 +90,8 @@ int main(int argc, char* argv[])
     // Create model
     vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, { -5, -5, 0 } };
     Model model(vertices, { 0, 255, 0, 255 });
+
+    bool teapotShrinking = true;
 
     bool quit = false;
     while (!quit)
@@ -91,6 +119,21 @@ int main(int argc, char* argv[])
         SDL_RenderClear(renderer.GetRenderer());
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
+
+        actors.at(0).get()->GetTransform().rotation.x += 10 * time.GetDeltaTime();
+        actors.at(0).get()->GetTransform().rotation.y += 60 * time.GetDeltaTime();
+        actors.at(0).get()->GetTransform().rotation.z += 30 * time.GetDeltaTime();
+
+        if (actors.at(0).get()->GetTransform().scale.x > 2) teapotShrinking = true;
+        else if (actors.at(0).get()->GetTransform().scale.x < 0.5) teapotShrinking = false;
+
+        if (teapotShrinking) actors.at(0).get()->GetTransform().scale -= 0.3f * time.GetDeltaTime();
+        else actors.at(0).get()->GetTransform().scale += 0.3f * time.GetDeltaTime();
+
+        if (randomf() > 0.5) actors.at(1).get()->GetTransform().position.x -= 20 * time.GetDeltaTime();
+        if (randomf() > 0.5) actors.at(1).get()->GetTransform().position.x += 20 * time.GetDeltaTime();
+        if (randomf() > 0.5) actors.at(1).get()->GetTransform().position.z -= 20 * time.GetDeltaTime();
+        if (randomf() > 0.5) actors.at(1).get()->GetTransform().position.z += 20 * time.GetDeltaTime();
 
 #pragma region primitive drawing loop
         /*
@@ -130,6 +173,8 @@ int main(int argc, char* argv[])
         int mx, my;
         SDL_GetMouseState(&mx, &my);
 
+        framebuffer.DrawImage(0, -100, 1.0f, image);
+
         //int x, y;
         //Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
         //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
@@ -149,20 +194,30 @@ int main(int argc, char* argv[])
         //PostProcess::Monochrome(framebuffer.GetBuffer());
 #pragma endregion
 
-        glm::vec3 direction{ 0 };
-        if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
-        if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
-        if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = 1;
-        if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y = -1;
-        if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
-        if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
+        if (input.GetMouseButtonDown(2))
+        {
+            input.SetRelativeMode(true);
 
-        cameraTransform.rotation.y += input.GetMousePositionDelta().x * 0.1f;
-        cameraTransform.rotation.x -= input.GetMousePositionDelta().y * 0.1f;
+            glm::vec3 direction{ 0 };
+            if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
+            if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
+            if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y = 1;
+            if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = -1;
+            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
+            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
 
-        glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction, 0 };
+            cameraTransform.rotation.y += input.GetMouseRelative().x * 0.25f;
+            cameraTransform.rotation.x += input.GetMouseRelative().y * 0.25f;
 
-        cameraTransform.position += offset * 100.0f * time.GetDeltaTime();
+            glm::vec3 offset = cameraTransform.GetMatrix() * glm::vec4{ direction, 0 };
+
+            cameraTransform.position += offset * 70.0f * time.GetDeltaTime();
+        }
+        else
+        {
+            input.SetRelativeMode(false);
+        }
+
         camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
 
         //transform.rotation.x += 45 * time.GetDeltaTime();
@@ -184,6 +239,5 @@ int main(int argc, char* argv[])
         // show screen
         SDL_RenderPresent(renderer.GetRenderer());
     }
-
     return 0;
 }

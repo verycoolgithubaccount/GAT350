@@ -15,8 +15,8 @@ public:
 	Camera(int width, int height) : m_width{ width }, m_height{ height } {}
 
 	glm::vec3 ModelToView(const glm::vec3& position) const;
-	glm::vec3 ViewToProjection(const glm::vec3& position) const;
-	glm::vec2 ToScreen(const glm::vec3& position) const;
+	glm::vec4 ViewToProjection(const glm::vec3& position) const;
+	glm::ivec2 ToScreen(const glm::vec3& position) const;
 
 	void SetView(const glm::vec3& eye, const glm::vec3& target, const glm::vec3& up = { 0, 1, 0 }); // up defaults to unit vector pointing up in y
 	void SetProjection(float fov, float aspectRatio, float near, float far);

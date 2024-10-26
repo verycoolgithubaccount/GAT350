@@ -10,7 +10,8 @@ private:
 	std::vector<uint8_t> m_prevKeyboardState;
 
 	glm::vec2 m_mousePosition{ 0, 0 };
-	glm::vec2 m_previousMousePosition{ 0, 0 };
+	glm::vec2 m_mouseRelative{ 0, 0 };
+
 	std::array<uint8_t, 3> m_mouseButtonState{ 0, 0, 0 };
 	std::array<uint8_t, 3> m_prevMouseButtonState{ 0, 0, 0 };
 
@@ -27,7 +28,10 @@ public:
 	bool GetPreviousKeyDown(uint8_t key) { return m_prevKeyboardState[key]; }
 
 	glm::vec2 GetMousePosition() { return m_mousePosition; }
-	glm::vec2 GetMousePositionDelta() { return m_mousePosition - m_previousMousePosition; }
+	glm::vec2 GetMouseRelative () { return m_mouseRelative; }
+
 	bool GetMouseButtonDown(uint8_t button) { return m_mouseButtonState[button]; }
 	bool GetPreviousMouseButtonDown(uint8_t button) { return m_prevMouseButtonState[button]; }
+
+	void SetRelativeMode(bool relative);
 };
