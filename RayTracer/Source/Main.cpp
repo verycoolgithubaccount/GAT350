@@ -21,10 +21,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 #include <vector>
-#include <ctime>
 
 int main(int argc, char* argv[])
 {
+    srand((unsigned int) time(NULL));
+
     // Initialize
     ETime eTime;
     Input input;
@@ -34,8 +35,6 @@ int main(int argc, char* argv[])
     renderer.Initialize();
     renderer.CreateWindow("Ray Tracer", 960, 600);
 
-    srand(time(NULL)); // looked up how to do this to get more random stuff
-
     Framebuffer framebuffer(renderer, renderer.GetWidth(), renderer.GetHeight());
 
     Camera camera{ 70.0f, (renderer.GetWidth() / (float) renderer.GetHeight())};
@@ -44,23 +43,23 @@ int main(int argc, char* argv[])
     Scene scene;
     std::vector<std::shared_ptr<Material>> materials;
 
-    materials.push_back(std::make_shared<Material>(color3_t{ 0.6f, 0, 0 })); // red
-    materials.push_back(std::make_shared<Material>(color3_t{ 0.9f, 0.55f, 0.4f })); // orange
-    materials.push_back(std::make_shared<Material>(color3_t{ 0.96f, 0.8f, 0.08f })); // yellow
-    materials.push_back(std::make_shared<Material>(color3_t{ 0.41f, 0.6f, 0.36f })); // green
-    materials.push_back(std::make_shared<Material>(color3_t{ 0, 0.5f, 0.69f })); // blue
-    materials.push_back(std::make_shared<Material>(color3_t{ 0.51f, 0, 0.39f })); // violet
-    materials.push_back(std::make_shared<Material>(color3_t{ 0.41f, 0.4f, 0.49f })); // gray
-    materials.push_back(std::make_shared<Material>(color3_t{ 0.996f, 0.99f, 1 })); // white
-    materials.push_back(std::make_shared<Material>(color3_t{ 0.04f, 0.04f, 0.04f })); // black
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.6f, 0, 0 })); // red
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.9f, 0.55f, 0.4f })); // orange
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.96f, 0.8f, 0.08f })); // yellow
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.41f, 0.6f, 0.36f })); // green
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0, 0.5f, 0.69f })); // blue
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.51f, 0, 0.39f })); // violet
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.41f, 0.4f, 0.49f })); // gray
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.996f, 0.99f, 1 })); // white
+    materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.04f, 0.04f, 0.04f })); // black
 
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 5; i++)
     {
         auto sphere = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), randomf(0, 3.0f), materials.at(random(materials.size())));
         scene.AddObject(std::move(sphere));
     }
 
-    auto plane = std::make_unique<Plane>(glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 1, 0 }, materials.at(6));
+    auto plane = std::make_unique<Plane>(glm::vec3{ 0, -5, 0 }, glm::vec3{ 0, 1, 0 }, materials.at(6));
     scene.AddObject(std::move(plane));
 
     bool quit = false;

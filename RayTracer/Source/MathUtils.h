@@ -28,6 +28,16 @@ namespace Math
 		return result;
 	}
 
+	inline float Dot(const glm::vec3& v1, const glm::vec3& v2)
+	{
+		return (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
+	}
+
+	inline glm::vec3 Reflect(const glm::vec3& incident, const glm::vec3& normal)
+	{
+		return incident - (normal * Dot(normal, incident)) * 2.0f;
+	}
+
 	inline void QuadraticPoint(int x1, int y1, int x2, int y2, int x3, int y3, float t, int& x, int& y)
 	{
 		float one_minus_t = 1 - t;
@@ -53,6 +63,6 @@ namespace Math
 
 	inline bool Approximately(float value1, float value2)
 	{
-		return ((value2 - value1) < FLT_EPSILON);
+		return (std::fabs(value2 - value1) < FLT_EPSILON);
 	}
 }
