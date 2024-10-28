@@ -1,4 +1,5 @@
 #pragma once
+#define FLT_EPSILON 1.192092896e-07F 
 #include <cmath>
 #include <glm/glm.hpp>
 
@@ -48,5 +49,10 @@ namespace Math
 
 		x = static_cast<int>((a * x1) + (b * x2) + (c * x3) + (d * x4));
 		y = static_cast<int>((a * y1) + (b * y2) + (c * y3) + (d * x4));
+	}
+
+	inline bool Approximately(float value1, float value2)
+	{
+		return ((value2 - value1) < FLT_EPSILON);
 	}
 }

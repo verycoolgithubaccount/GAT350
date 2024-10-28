@@ -11,7 +11,7 @@ color3_t Tracer::Trace(Scene& scene, const ray_t& ray)
 	{
 		if (object->Hit(ray))
 		{
-			return { 1, 0, 0 };
+			return object->GetMaterial().lock()->GetColor();
 		}
 	}
 
