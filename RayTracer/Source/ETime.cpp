@@ -1,6 +1,6 @@
 #include "ETime.h"
 
-void Time::Tick()
+void ETime::Tick()
 {
 	clock::duration duration = clock::now() - m_startTime;
 	m_time = duration.count() / (float)clock::duration::period::den;

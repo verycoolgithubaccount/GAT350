@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-class Time
+class ETime
 {
 private:
 	using clock = std::chrono::high_resolution_clock;
@@ -13,7 +13,7 @@ private:
 	clock::time_point m_frameTime;
 
 public:
-	Time() :
+	ETime() :
 		m_startTime{ clock::now() },
 		m_frameTime{ clock::now() }
 	{}
