@@ -13,6 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Material">
+      <UniqueIdentifier>{cdcc2804-beae-4c6c-92fe-31f9bebf15bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Material">
+      <UniqueIdentifier>{13da56e9-2859-4a34-9da1-4c478cbe322e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{b3a1ec19-8618-4227-b46e-837b7dadc6cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Render">
+      <UniqueIdentifier>{60c9997c-c192-452f-9ff2-dc96cdfd95a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{d532f3f9-0c93-4e0e-986f-7fca8131878b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model">
+      <UniqueIdentifier>{9eb88489-da77-428c-b8f0-d7c24068eb84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object">
+      <UniqueIdentifier>{0029b5a5-990a-49f6-b0c3-375fd0c08df4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Renderer.cpp">
@@ -60,70 +81,82 @@
     <ClCompile Include="Source\Plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Material.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Lambertian.cpp">
+      <Filter>Source Files\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Metal.cpp">
+      <Filter>Source Files\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Renderer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Material.h">
+      <Filter>Header Files\Material</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Framebuffer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Lambertian.h">
+      <Filter>Header Files\Material</Filter>
     </ClInclude>
     <ClInclude Include="Source\MathUtils.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PostProcess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ETime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Input.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Emissive.h">
+      <Filter>Header Files\Material</Filter>
     </ClInclude>
     <ClInclude Include="Source\Random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Transform.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Source\Camera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Color.h">
+      <Filter>Header Files\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Tracer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Framebuffer.h">
+      <Filter>Header Files\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Sphere.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\PostProcess.h">
+      <Filter>Header Files\Render</Filter>
     </ClInclude>
     <ClInclude Include="Source\Ray.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Renderer.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tracer.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ETime.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Transform.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor.h">
+      <Filter>Header Files\Object</Filter>
     </ClInclude>
     <ClInclude Include="Source\Plane.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneObject.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Sphere.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Image.h">
+      <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Metal.h">
+      <Filter>Header Files\Material</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

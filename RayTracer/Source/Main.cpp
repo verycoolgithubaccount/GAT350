@@ -14,6 +14,8 @@
 #include "Actor.h"
 #include "Ray.h"
 #include "Scene.h"
+#include "Lambertian.h"
+#include "Metal.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -52,8 +54,17 @@ int main(int argc, char* argv[])
     materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.41f, 0.4f, 0.49f })); // gray
     materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.996f, 0.99f, 1 })); // white
     materials.push_back(std::make_shared<Lambertian>(color3_t{ 0.04f, 0.04f, 0.04f })); // black
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.6f, 0, 0 }, randomf())); // red
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.9f, 0.55f, 0.4f }, randomf())); // orange
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.96f, 0.8f, 0.08f }, randomf())); // yellow
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.41f, 0.6f, 0.36f }, randomf())); // green
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0, 0.5f, 0.69f }, randomf())); // blue
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.51f, 0, 0.39f }, randomf())); // violet
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.41f, 0.4f, 0.49f }, randomf())); // gray
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.996f, 0.99f, 1 }, randomf())); // white
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.04f, 0.04f, 0.04f }, randomf())); // black
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 20; i++)
     {
         auto sphere = std::make_unique<Sphere>(random(glm::vec3{ -10 }, glm::vec3{ 10 }), randomf(0, 3.0f), materials.at(random(materials.size())));
         scene.AddObject(std::move(sphere));
@@ -83,8 +94,7 @@ int main(int argc, char* argv[])
 
         // render
         framebuffer.Clear(Color::Convert(color4_t{ 0.125, 0.125, 0.25, 1 }));
-
-        scene.Render(framebuffer, camera);
+        scene.Render(framebuffer, camera, 50, 5);
 
         framebuffer.Update();
         

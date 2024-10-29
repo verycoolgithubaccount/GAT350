@@ -146,8 +146,9 @@
     <ClCompile Include="Source\Framebuffer.cpp" />
     <ClCompile Include="Source\Image.cpp" />
     <ClCompile Include="Source\Input.cpp" />
+    <ClCompile Include="Source\Lambertian.cpp" />
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\Material.cpp" />
+    <ClCompile Include="Source\Metal.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Plane.cpp" />
     <ClCompile Include="Source\PostProcess.cpp" />
@@ -160,12 +161,15 @@
     <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Color.h" />
+    <ClInclude Include="Source\Emissive.h" />
     <ClInclude Include="Source\ETime.h" />
     <ClInclude Include="Source\Framebuffer.h" />
     <ClInclude Include="Source\Image.h" />
     <ClInclude Include="Source\Input.h" />
+    <ClInclude Include="Source\Lambertian.h" />
     <ClInclude Include="Source\Material.h" />
     <ClInclude Include="Source\MathUtils.h" />
+    <ClInclude Include="Source\Metal.h" />
     <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\Plane.h" />
     <ClInclude Include="Source\PostProcess.h" />
