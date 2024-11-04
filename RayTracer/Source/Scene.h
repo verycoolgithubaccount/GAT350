@@ -1,6 +1,7 @@
 #pragma once
 #include "Sphere.h"
 #include "Plane.h"
+#include "Triangle.h"
 #include <vector> // for a game, list is better bc adding/deleting objects, for a showcase, vector is better bc faster
 #include <memory>
 
