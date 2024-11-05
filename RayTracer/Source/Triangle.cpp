@@ -1,10 +1,34 @@
 #include "Triangle.h"
 
+void Triangle::Update()
+{
+    m_v1 = m_transform * glm::vec4{ m_local_v1, 1 };
+    m_v2 = m_transform * glm::vec4{ m_local_v2, 1 };
+    m_v3 = m_transform * glm::vec4{ m_local_v3, 1 };
+}
+
 bool Triangle::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance)
 {
-    // set edges of the triangle
+    float t;
+
+    if (!Raycast(ray, m_v1, m_v2, m_v3, minDistance, maxDistance, t)) return false;
+
     glm::vec3 edge1 = m_v2 - m_v1;
     glm::vec3 edge2 = m_v3 - m_v1;
+
+    raycastHit.distance = t;
+    raycastHit.point = ray.at(t);
+    raycastHit.normal = glm::normalize(Math::Cross(edge1, edge2));
+    raycastHit.material = GetMaterial();
+
+    return true;
+}
+
+bool Triangle::Raycast(const ray_t& ray, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, float minDistance, float maxDistance, float& t)
+{
+    // set edges of the triangle
+    glm::vec3 edge1 = v2 - v1;
+    glm::vec3 edge2 = v3 - v1;
 
     // calculate perpendicular vector, determine how aligned the ray is with the triangle plane
     glm::vec3 pvec = Math::Cross(ray.direction, edge2);
@@ -21,7 +45,7 @@ bool Triangle::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance
     float invDet = 1 / determinant;
 
     // create direction vector from the triangle first vertex to the ray origin
-    glm::vec3 tvec = ray.origin - m_v1;
+    glm::vec3 tvec = ray.origin - v1;
     // Calculate u parameter for barycentric coordinates
     float u = Math::Dot(tvec, pvec) * invDet;
     // Check if u is outside the bounds of the triangle, no intersection
@@ -41,15 +65,9 @@ bool Triangle::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance
     }
 
     // Calculate intersection distance and check range
-    float t = Math::Dot(edge2, qvec) * invDet;
+    t = Math::Dot(edge2, qvec) * invDet;
     if (t >= minDistance && t <= maxDistance)
     {
-        // set raycast hit
-        raycastHit.distance = t;
-        raycastHit.point = ray.at(t);
-        raycastHit.normal = glm::normalize(Math::Cross(edge1, edge2));
-        raycastHit.material = GetMaterial();
-
         return true;
     }
 

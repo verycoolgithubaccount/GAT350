@@ -10,3 +10,10 @@ void ETime::Tick()
 
 	m_frameTime = clock::now();
 }
+
+float ETime::GetElapsedTime() const
+{
+	clock::duration duration = clock::now() - m_startTime;
+
+	return duration.count() / (float)clock::duration::period::den;
+}
