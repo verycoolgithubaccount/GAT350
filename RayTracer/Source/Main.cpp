@@ -26,6 +26,7 @@
 #include <vector>
 
 void InitScene(Scene& scene);
+void InitCornellBox(Scene& scene);
 
 int main(int argc, char* argv[])
 {
@@ -42,15 +43,15 @@ int main(int argc, char* argv[])
 
     Framebuffer framebuffer(renderer, renderer.GetWidth(), renderer.GetHeight());
 
-    Camera camera{ 70.0f, (renderer.GetWidth() / (float) renderer.GetHeight())};
-    camera.SetView({ 0, 0, -20 }, { 0, 0, 0 });
+    Camera camera{ 50.0f, (renderer.GetWidth() / (float) renderer.GetHeight())};
+    camera.SetView({ 0, 0, -20 }, { 0, 1, 0 });
 
     Scene scene;
-    InitScene(scene);
+    InitCornellBox(scene);
 
     // render
     scene.Update();
-    scene.Render(framebuffer, camera, 200, 25);
+    scene.Render(framebuffer, camera, 200, 6);
     framebuffer.Update();
 
     bool quit = false;
@@ -153,4 +154,49 @@ void InitScene(Scene& scene)
     auto model = std::make_unique<Model>(Transform{ glm::vec3{0, 2, 2}, glm::vec3{0, 40, 0}, glm::vec3{4} }, materials.at(3));
     model->Load("models/cube.obj");
     scene.AddObject(std::move(model));
+}
+
+void InitCornellBox(Scene& scene)
+{
+
+#pragma region material declaration
+
+    auto red = std::make_shared<Lambertian>(color3_t{ 1.0f, 0, 0 }); // red
+    auto green = std::make_shared<Lambertian>(color3_t{ 0.0f, 1.0f, 0.0f }); // green
+    auto white = std::make_shared<Lambertian>(color3_t{ 0.996f, 0.99f, 1 }); // white
+    auto orange = std::make_shared<Lambertian>(color3_t{ 0.9f, 0.55f, 0.4f }); // orange
+    auto light = std::make_shared<Emissive>(color3_t{ 0.996f, 0.99f, 1 }, 5.0f); // white
+    auto glass = std::make_shared<Dielectric>(color3_t{ 0.51f, 0, 0.39f }, 1.75f); // violet
+    auto metal = std::make_shared<Metal>(color3_t{ 0.996f, 0.99f, 1 }, 0.3f); // white
+#pragma endregion
+
+    auto floor = std::make_unique<Plane>(Transform{ glm::vec3{0, -2, 0} }, white);
+    scene.AddObject(std::move(floor));
+
+    auto ceiling = std::make_unique<Plane>(Transform{ glm::vec3{0, 3.0f, 0} }, white);
+    scene.AddObject(std::move(ceiling));
+
+    auto backWall = std::make_unique<Plane>(Transform{ glm::vec3{0, 0, -8.0f }, glm::vec3{ -90.0f, 0, 0 } }, white);
+    scene.AddObject(std::move(backWall));
+
+    auto redWall = std::make_unique<Plane>(Transform{ glm::vec3{-4.0f, 0, 0}, glm::vec3{ 0, 0, 90.0f } }, red);
+    scene.AddObject(std::move(redWall));
+
+    auto greenWall = std::make_unique<Plane>(Transform{ glm::vec3{4.0f, 0, 0}, glm::vec3{ 0, 0, 90.0f } }, green);
+    scene.AddObject(std::move(greenWall));
+
+    auto lightCube = std::make_unique<Model>(Transform{ glm::vec3{0, 4.0f, -13.0f}, glm::vec3{0, 0, 0}, glm::vec3{2} }, light);
+    lightCube->Load("models/cube.obj");
+    scene.AddObject(std::move(lightCube));
+
+    auto glassCube = std::make_unique<Model>(Transform{ glm::vec3{-2.0f, -1.0f, -13.0f}, glm::vec3{0, 22.5f, 0}, glm::vec3{2} }, glass);
+    glassCube->Load("models/cube.obj");
+    scene.AddObject(std::move(glassCube));
+
+    auto metalSphere = std::make_unique<Sphere>(Transform{ glm::vec3{ 0, -0.5f, -11.0f } }, 1.5f, metal);
+    scene.AddObject(std::move(metalSphere));
+
+    auto orangeSphere = std::make_unique<Sphere>(Transform{ glm::vec3{ 2.0f, -1.5f, -14.0f } }, 0.5f, orange);
+    scene.AddObject(std::move(orangeSphere));
+
 }
