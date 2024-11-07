@@ -42,26 +42,26 @@ int main(int argc, char* argv[])
 
     // Load images
     Image image;
-    image.Load("hill.jpg");
+    image.Load("textures/hill.jpg");
 
     std::vector<std::unique_ptr<Actor>> actors;
 
     std::shared_ptr<Model> teapotModel = std::make_shared<Model>();
-    teapotModel->Load("teapot.obj");
+    teapotModel->Load("models/teapot.obj");
     Transform teapotTransform({ 0.0f, 30.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 2 });
     std::unique_ptr<Actor> teapot = std::make_unique<Actor>(teapotTransform, teapotModel);
     teapot->SetColor({ 0, 55, 200 });
     actors.push_back(std::move(teapot));
 
     std::shared_ptr<Model> littleManModel = std::make_shared<Model>();
-    littleManModel->Load("littleMan.obj");
+    littleManModel->Load("models/littleMan.obj");
     Transform littleManTransform({ 0.0f, 3.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 4 });
     std::unique_ptr<Actor> littleMan = std::make_unique<Actor>(littleManTransform, littleManModel);
     littleMan->SetColor({ 255, 128, 0 });
     actors.push_back(std::move(littleMan));
 
     std::shared_ptr<Model> groundModel = std::make_shared<Model>();
-    groundModel->Load("ground.obj");
+    groundModel->Load("models/ground.obj");
     Transform groundTransform({ 0.0f, -5.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 5 });
     std::unique_ptr<Actor> ground = std::make_unique<Actor>(groundTransform, groundModel);
     ground->SetColor({ 92, 56, 21 });
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 
 
     std::shared_ptr<Model> treeModel = std::make_shared<Model>();
-    treeModel->Load("tree.obj");
+    treeModel->Load("models/tree.obj");
     
 
     
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     
 
     Image imageAlpha;
-    imageAlpha.Load("imageAlpha.png");
+    imageAlpha.Load("textures/imageAlpha.png");
     PostProcess::Alpha(imageAlpha.m_buffer, 64);
 
 

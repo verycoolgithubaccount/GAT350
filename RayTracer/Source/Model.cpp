@@ -1,6 +1,7 @@
 #include "Model.h"
 #include "Framebuffer.h"
 #include "Triangle.h"
+#include "Sphere.h"
 #include "Camera.h"
 #include <iostream>
 #include <fstream>
@@ -11,6 +12,22 @@ void Model::Update()
 	for (size_t i = 0; i < m_local_vertices.size(); i++)
 	{
 		m_vertices[i] = m_transform * glm::vec4{ m_local_vertices[i], 1 };
+	}
+
+	// Find the sphere encapsulating all points in the model, 
+	// so that if that sphere isn't on the screen you don't touch the model
+	m_center = glm::vec3{ 0 };
+	for (auto& vertex : m_vertices)
+	{
+		m_center += vertex;
+	}
+	m_center /= (float)m_vertices.size();
+
+	m_radius = 0;
+	for (auto& vertex : m_vertices)
+	{
+		float radius = glm::length(vertex - m_center);
+		m_radius = glm::max(radius, m_radius);
 	}
 }
 
@@ -87,7 +104,9 @@ bool Model::Load(const std::string& filename)
 
 bool Model::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance)
 {
-	//TODO: Check for bounding sphere raycast
+	// don't load the model unless its bounding box is visible
+	float t;
+	if (!Sphere::Raycast(ray, m_center, m_radius, minDistance, maxDistance, t)) return false;
 
 	for (size_t i = 0; i < m_vertices.size(); i += 3)
 	{

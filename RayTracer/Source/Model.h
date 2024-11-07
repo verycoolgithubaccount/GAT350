@@ -13,6 +13,9 @@ private:
 	vertices_t m_vertices;
 	vertices_t m_local_vertices;
 
+	glm::vec3 m_center{ 0 };
+	float m_radius{ 0 };
+
 public:
 	Model(std::shared_ptr<Material> material) : SceneObject{ material } {}
 	Model(const Transform& transform, std::shared_ptr<Material> material) : SceneObject{ transform, material } {}

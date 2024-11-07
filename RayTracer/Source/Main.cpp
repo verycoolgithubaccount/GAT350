@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
     // render
     scene.Update();
-    scene.Render(framebuffer, camera, 50, 5);
+    scene.Render(framebuffer, camera, 200, 25);
     framebuffer.Update();
 
     bool quit = false;
@@ -83,6 +83,8 @@ int main(int argc, char* argv[])
 
 void InitScene(Scene& scene)
 {
+    scene.SetSky(Color::HSVtoRGB(0, 0.86f, 0.3f), Color::HSVtoRGB(0, 0.90f, 0.05f));
+
     std::vector<std::shared_ptr<Material>> materials;
 
 #pragma region material declaration
@@ -128,13 +130,13 @@ void InitScene(Scene& scene)
     materials.push_back(std::make_shared<Dielectric>(color3_t{ 0.04f, 0.04f, 0.04f }, randomf(1.33f, 2.42f))); // black
 #pragma endregion
 
-    /*
-    for (int i = 0; i < 20; i++)
+    
+    for (int i = 0; i < 40; i++)
     {
         auto sphere = std::make_unique<Sphere>(Transform{ random(glm::vec3{ -10 }, glm::vec3{ 10 }) }, randomf(0, 3.0f), materials.at(random(materials.size())));
         scene.AddObject(std::move(sphere));
     }
-    */
+    
 
     auto control = std::make_unique<Sphere>(Transform{ glm::vec3{0} }, 3.0f, materials.at(7));
     //scene.AddObject(std::move(control));
