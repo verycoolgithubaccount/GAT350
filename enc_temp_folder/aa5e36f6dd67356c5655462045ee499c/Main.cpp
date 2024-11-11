@@ -107,7 +107,7 @@ void InitScene(Scene& scene)
     materials.push_back(std::make_shared<Metal>(color3_t{ 0, 0.5f, 0.69f }, randomf(0, 0.5f))); // blue
     materials.push_back(std::make_shared<Metal>(color3_t{ 0.51f, 0, 0.39f }, randomf(0, 0.5f))); // violet
     materials.push_back(std::make_shared<Metal>(color3_t{ 0.41f, 0.4f, 0.49f }, randomf(0, 0.5f))); // gray
-    materials.push_back(std::make_shared<Metal>(color3_t{ 0.996f, 0.99f, 1 }, randomf(0, 0.5f))); // white
+    materials.push_back(std::make_shared<Metal>(color3_t{ 0.996f, 0.99f, 1 }, 0.8f)); // white
     materials.push_back(std::make_shared<Metal>(color3_t{ 0.04f, 0.04f, 0.04f }, randomf(0, 0.5f))); // black
 
     materials.push_back(std::make_shared<Emissive>(color3_t{ 0.6f, 0, 0 }, 10.0f)); // red
@@ -152,11 +152,7 @@ void InitScene(Scene& scene)
     auto plane = std::make_unique<Plane>(Transform{ glm::vec3{0, -2, 0} }, materials.at(6));
     scene.AddObject(std::move(plane));
 
-    auto model = std::make_unique<Model>(Transform{ glm::vec3{0, 2, 2}, glm::vec3{0, 40, 0}, glm::vec3{4} }, materials.at(6));
-    model->Load("models/cube.obj");
-    scene.AddObject(std::move(model));
-
-    auto model = std::make_unique<Model>(Transform{ glm::vec3{0, -2.7, 2}, glm::vec3{0, 40, 0}, glm::vec3{4} }, materials.at(16));
+    auto model = std::make_unique<Model>(Transform{ glm::vec3{0, 2, 2}, glm::vec3{0, 40, 0}, glm::vec3{4} }, materials.at(17));
     model->Load("models/cube.obj");
     scene.AddObject(std::move(model));
 
