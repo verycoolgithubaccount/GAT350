@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "Actor.h"
+#include "Shader.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -46,52 +47,31 @@ int main(int argc, char* argv[])
 
     std::vector<std::unique_ptr<Actor>> actors;
 
-    std::shared_ptr<Model> teapotModel = std::make_shared<Model>();
-    teapotModel->Load("models/teapot.obj");
-    Transform teapotTransform({ 0.0f, 30.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 2 });
-    std::unique_ptr<Actor> teapot = std::make_unique<Actor>(teapotTransform, teapotModel);
-    teapot->SetColor({ 0, 55, 200 });
-    actors.push_back(std::move(teapot));
-
-    std::shared_ptr<Model> littleManModel = std::make_shared<Model>();
-    littleManModel->Load("models/littleMan.obj");
-    Transform littleManTransform({ 0.0f, 3.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 4 });
-    std::unique_ptr<Actor> littleMan = std::make_unique<Actor>(littleManTransform, littleManModel);
-    littleMan->SetColor({ 255, 128, 0 });
-    actors.push_back(std::move(littleMan));
-
-    std::shared_ptr<Model> groundModel = std::make_shared<Model>();
-    groundModel->Load("models/ground.obj");
-    Transform groundTransform({ 0.0f, -5.0f, 0.0f }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 5 });
-    std::unique_ptr<Actor> ground = std::make_unique<Actor>(groundTransform, groundModel);
-    ground->SetColor({ 92, 56, 21 });
-    actors.push_back(std::move(ground));
-
-
-    std::shared_ptr<Model> treeModel = std::make_shared<Model>();
-    treeModel->Load("models/tree.obj");
-    
-
-    
-    for (int i = 0; i < 20; i++)
-    {
-        Transform transform({ randomf(-50.0f, 50.0f), 0, randomf(-50.0f, 50.0f) }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 0.05 });
-        std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, treeModel);
-        actor->SetColor({ (uint8_t)random(0, 100), (uint8_t)random(150, 256), (uint8_t)random(0, 100), 255 });
-        actors.push_back(std::move(actor));
-    }
-    
-
     Image imageAlpha;
     imageAlpha.Load("textures/imageAlpha.png");
     PostProcess::Alpha(imageAlpha.m_buffer, 64);
 
 
-    // Create model
-    vertices_t vertices = { { -5, 5, 0 }, { 5, 5, 0 }, { -5, -5, 0 } };
-    Model model(vertices, { 0, 255, 0, 255 });
 
-    bool teapotShrinking = true;
+    // shader
+    VertexShader::uniforms.view = camera.GetView();
+    VertexShader::uniforms.projection = camera.GetProjection();
+    VertexShader::uniforms.ambient = color3_t{ 0.1 };
+
+    VertexShader::uniforms.light.position = glm::vec3{ 100, 100, -10 };
+    VertexShader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
+    VertexShader::uniforms.light.color = color3_t{ 1 }; // white light
+
+    Shader::framebuffer = &framebuffer;
+    
+    // models
+    std::shared_ptr<Model> model = std::make_shared<Model>();
+    model->Load("models/dragon.obj");
+    model->SetColor({ 0, 0.5, 0, 0 });
+
+    Transform transform{ glm::vec3{ 0 }, glm::vec3{ 0 }, glm::vec3{ 5 } };
+    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model);
+    actors.push_back(std::move(actor));
 
     bool quit = false;
     while (!quit)
@@ -120,60 +100,10 @@ int main(int argc, char* argv[])
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
-        actors.at(0).get()->GetTransform().rotation.x += 10 * time.GetDeltaTime();
-        actors.at(0).get()->GetTransform().rotation.y += 60 * time.GetDeltaTime();
-        actors.at(0).get()->GetTransform().rotation.z += 30 * time.GetDeltaTime();
-
-        if (actors.at(0).get()->GetTransform().scale.x > 2) teapotShrinking = true;
-        else if (actors.at(0).get()->GetTransform().scale.x < 0.5) teapotShrinking = false;
-
-        if (teapotShrinking) actors.at(0).get()->GetTransform().scale -= 0.3f * time.GetDeltaTime();
-        else actors.at(0).get()->GetTransform().scale += 0.3f * time.GetDeltaTime();
-
-        if (randomf() > 0.5) actors.at(1).get()->GetTransform().position.x -= 20 * time.GetDeltaTime();
-        if (randomf() > 0.5) actors.at(1).get()->GetTransform().position.x += 20 * time.GetDeltaTime();
-        if (randomf() > 0.5) actors.at(1).get()->GetTransform().position.z -= 20 * time.GetDeltaTime();
-        if (randomf() > 0.5) actors.at(1).get()->GetTransform().position.z += 20 * time.GetDeltaTime();
-
-#pragma region primitive drawing loop
-        /*
-        for (int i = 0; i < 5; i++)
-        {
-            int x = rand() % framebuffer.GetWidth();
-            int y = rand() % framebuffer.GetHeight();
-            int x2 = rand() % framebuffer.GetWidth();
-            int y2 = rand() % framebuffer.GetHeight();
-            int x3 = rand() % framebuffer.GetWidth();
-            int y3 = rand() % framebuffer.GetHeight();
-
-            framebuffer.DrawTriangle(x, y, x2, y2, x3, y3, { (uint8_t) (rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255});
-        
-            x = rand() % framebuffer.GetWidth();
-            y = rand() % framebuffer.GetHeight();
-            x2 = rand() % framebuffer.GetWidth();
-            y2 = rand() % framebuffer.GetHeight();
-
-            framebuffer.DrawLine(x, y, x2, y2, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
-
-
-            x = rand() % framebuffer.GetWidth();
-            y = rand() % framebuffer.GetHeight();
-            int w = rand() % framebuffer.GetWidth() / 30;
-            int h = rand() % framebuffer.GetHeight() / 30;
-            framebuffer.DrawRect(x, y, w, h, { (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), (uint8_t)(rand() % 255), 255 });
-
-            
-            //x = rand() % framebuffer.GetWidth();
-            //y = rand() % framebuffer.GetHeight();
-            //framebuffer.DrawImage(x, y, (2.0f / (rand() % 10)), image);
-        }
-        */
-#pragma endregion
-
         int mx, my;
         SDL_GetMouseState(&mx, &my);
 
-        framebuffer.DrawImage(0, -100, 1.0f, image);
+        //framebuffer.DrawImage(0, -100, 1.0f, image);
 
         //int x, y;
         //Math::CubicPoint(300, 400, 300, 300, mx, my, 600, 400, t, x, y);
@@ -219,6 +149,7 @@ int main(int argc, char* argv[])
         }
 
         camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
+        VertexShader::uniforms.view = camera.GetView();
 
         //transform.rotation.x += 45 * time.GetDeltaTime();
         //transform.rotation.y += 90 * time.GetDeltaTime();
@@ -228,7 +159,8 @@ int main(int argc, char* argv[])
 
         for (auto& actor : actors)
         {
-            actor->Draw(framebuffer, camera);
+            actor->GetTransform().rotation.y += time.GetDeltaTime() * 90;
+            actor->Draw();
         }
 
         framebuffer.Update();
