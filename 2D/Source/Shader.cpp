@@ -3,6 +3,8 @@
 #include "Rasterizer.h"
 
 Framebuffer* Shader::framebuffer{ nullptr };
+Shader::eFrontFace Shader::frontFace = Shader::eFrontFace::CCW;
+Shader::eCullMode Shader::cullMode = Shader::eCullMode::NONE;
 
 void Shader::Draw(const vertexbuffer_t& vb)
 {
@@ -28,6 +30,24 @@ void Shader::Draw(const vertexbuffer_t& vb)
 		if (!ToScreen(v0, s0)) continue;
 		if (!ToScreen(v1, s1)) continue;
 		if (!ToScreen(v2, s2)) continue;
+
+		float z = Math::Cross(s1 - s0, s2 - s0);
+
+		if (std::fabs(z) < std::numeric_limits<float>::epsilon()) continue;
+
+		switch (cullMode)
+		{
+		case Shader::eCullMode::FRONT:
+			if (frontFace == Shader::eFrontFace::CCW && z > 0) continue;
+			if (frontFace == Shader::eFrontFace::CW && z < 0) continue;
+			break;
+		case Shader::eCullMode::BACK:
+			if (frontFace == Shader::eFrontFace::CCW && z < 0) continue;
+			if (frontFace == Shader::eFrontFace::CW && z > 0) continue;
+			break;
+		default:
+			break;
+		}
 
 		// rasterization
 		Rasterizer::Triangle(*framebuffer, s0, s1, s2, v0, v1, v2);

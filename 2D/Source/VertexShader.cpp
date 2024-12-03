@@ -28,8 +28,8 @@ void VertexShader::Process(const vertex_t& inputVertex, vertex_output_t& outputV
 	}
 	else
 	{
-		glm::vec3 lightDirection = uniforms.view * glm::vec4{ uniforms.light.direction, 1 };
-		lightDir = glm::normalize(-lightDirection);
+		glm::vec3 lightDirection = uniforms.view * glm::vec4{ -uniforms.light.direction, 0 };
+		lightDir = glm::normalize(lightDirection);
 	}
 
 	float intensity = std::max(0.0f, Math::Dot(lightDir, outputVertex.normal));

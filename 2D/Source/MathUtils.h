@@ -52,7 +52,7 @@ namespace Math
 
 	inline float Cross(const glm::vec2& v1, const glm::vec2& v2)
 	{
-		return glm::cross(glm::vec3{ v1.x, v1.y, 0 }, glm::vec3{ v2.x, v2.y, 0 }).z;
+		return v1.x * v2.y - v2.x * v1.y;
 	}
 
 	inline float Dot(const glm::vec3& v1, const glm::vec3& v2)

@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     
     // models
     std::shared_ptr<Model> model = std::make_shared<Model>();
-    model->Load("models/dragon.obj");
+    model->Load("models/ogre.obj");
     model->SetColor({ 0, 0.5, 0, 0 });
 
     Transform transform{ glm::vec3{ 0 }, glm::vec3{ 0 }, glm::vec3{ 5 } };

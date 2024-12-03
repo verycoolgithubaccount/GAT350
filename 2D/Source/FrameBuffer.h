@@ -33,6 +33,7 @@ public:
 	int GetWidth() const { return m_width; }
 	int GetHeight() const { return m_height; }
 	std::vector<color_t>& GetBuffer() { return m_buffer; }
+	std::vector<float>& GetDepth() { return m_depth; }
 private:
 	int m_width{ 0 };
 	int m_height{ 0 };
@@ -40,6 +41,7 @@ private:
 
 	SDL_Texture* m_texture{ nullptr };
 	std::vector<color_t> m_buffer;
+	std::vector<float> m_depth;
 
 	void DrawOctants(int xc, int yc, int x, int y, const color_t& color);
 };
