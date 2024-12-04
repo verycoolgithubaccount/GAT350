@@ -3,6 +3,7 @@
 
 void Actor::Draw()
 {
-	VertexShader::uniforms.model = m_transform.GetMatrix();
+	Shader::uniforms.material = *m_material;
+	Shader::uniforms.model = m_transform.GetMatrix();
 	m_model->Draw();
 }

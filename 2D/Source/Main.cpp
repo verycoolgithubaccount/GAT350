@@ -54,13 +54,13 @@ int main(int argc, char* argv[])
 
 
     // shader
-    VertexShader::uniforms.view = camera.GetView();
-    VertexShader::uniforms.projection = camera.GetProjection();
-    VertexShader::uniforms.ambient = color3_t{ 0.1 };
+    Shader::uniforms.view = camera.GetView();
+    Shader::uniforms.projection = camera.GetProjection();
+    Shader::uniforms.ambient = color3_t{ 0.1 };
 
-    VertexShader::uniforms.light.position = glm::vec3{ 100, 100, -10 };
-    VertexShader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
-    VertexShader::uniforms.light.color = color3_t{ 1 }; // white light
+    Shader::uniforms.light.position = glm::vec3{ 100, 100, -10 };
+    Shader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
+    Shader::uniforms.light.color = color3_t{ 1, 1, 0 };
 
     Shader::framebuffer = &framebuffer;
     
@@ -69,9 +69,25 @@ int main(int argc, char* argv[])
     model->Load("models/ogre.obj");
     model->SetColor({ 0, 0.5, 0, 0 });
 
+    // materials
+    std::shared_ptr<material_t> material = std::make_shared<material_t>();
+    material->albedo = color3_t{ 0, 0.5, 0.5 };
+    material->specular = color3_t{ 0 };
+    material->shininess = 1.0f;
+
+    std::shared_ptr<material_t> material2 = std::make_shared<material_t>();
+    material2->albedo = color3_t{ 1.0f, 0, 0 };
+    material2->specular = color3_t{ 1.0f, 0.5f, 0 };
+    material2->shininess = 32.0f;
+
     Transform transform{ glm::vec3{ 0 }, glm::vec3{ 0 }, glm::vec3{ 5 } };
-    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model);
+    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model, material);
     actors.push_back(std::move(actor));
+
+    Transform transform2{ glm::vec3{ 10, 0, 0 }, glm::vec3{ 0 }, glm::vec3{ 5 } };
+    std::unique_ptr<Actor> actor2 = std::make_unique<Actor>(transform2, model, material2);
+    actors.push_back(std::move(actor2));
+
 
     bool quit = false;
     while (!quit)
@@ -149,7 +165,7 @@ int main(int argc, char* argv[])
         }
 
         camera.SetView(cameraTransform.position, cameraTransform.position + cameraTransform.GetForward());
-        VertexShader::uniforms.view = camera.GetView();
+        Shader::uniforms.view = camera.GetView();
 
         //transform.rotation.x += 45 * time.GetDeltaTime();
         //transform.rotation.y += 90 * time.GetDeltaTime();
